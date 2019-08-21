@@ -1,5 +1,6 @@
 import React from 'react'
 import axios from 'axios'
+import { ReactTabulator } from 'react-tabulator'
 
 import Sidebar from './Sidebar'
 import Header from './Header'
@@ -13,13 +14,11 @@ class Fund extends React.Component {
     let fundName = window.location.href
     fundName = fundName.split('/').slice(-1)[0]
     fundName = decodeURIComponent(fundName)
-    console.log(fundName)
 
     // set initial state
     this.state = {
       fundName: fundName
     }
-    console.log(this.state)
 
     this.handleClick = this.handleClick.bind(this)
     this.handleChange = this.handleChange.bind(this)
@@ -32,7 +31,6 @@ class Fund extends React.Component {
       }
     })
       .then((response) => {
-        // console.log(response)
         this.setState({
           'fundOverview': response.data.fund_overview
         })
@@ -45,6 +43,7 @@ class Fund extends React.Component {
       fund_overview: this.state.fundOverview
     })
       .then((response) => {
+        console.log('Updated data:')
         console.log(response)
       })
   }
@@ -55,6 +54,18 @@ class Fund extends React.Component {
   }
 
   render() {
+
+    // define tabulator data
+    const columns = [
+      {title:"Year", field:"year"},
+      {title:"Month", field:"month"},
+      {title:"Return", field:"return", editor:true}
+    ]
+
+    const data = [
+      {"id": 0, "month": "January", "year": 2019, "return": 10.5}
+    ]
+
     return (
       <div className="container-fluid">
         <Sidebar 
@@ -75,6 +86,14 @@ class Fund extends React.Component {
                 onChange={this.handleChange}>
               </textarea>
             </div>
+
+            <div>
+              <label>Fund Performance</label>
+              <ReactTabulator 
+                columns={columns}
+                data={data} />
+            </div>
+            <br/>
 
             <button
               className="btn btn-primary"
