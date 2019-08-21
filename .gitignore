@@ -2,11 +2,11 @@
 venv/*
 
 *.pyc
-*.egg-info/*
 
 data/*
 logs/*
 !logs/.keep
+webapp/*.egg-info/*
 webapp/static/node_modules
 webapp/static/package-lock.json
 webapp/static/dist/*

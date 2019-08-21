@@ -68,15 +68,8 @@ def get_fact_sheet():
 
         return jsonify({'success': True})
 
-        # return send_file(
-        #     '/Users/jimcaine/projects/factsheets/fact_sheet.pdf',
-        #     mimetype='application/pdf',
-        #     as_attachment=True)
-
-
 @app.route('/api/download_fact_sheet', methods=['GET'])
 def download_fact_sheet():
-
     if request.method == 'GET':
         print('downloading factsheet')
         path = os.path.dirname(os.path.realpath(__file__)) + '/static/fact_sheet.pdf'

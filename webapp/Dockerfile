@@ -9,8 +9,8 @@ RUN apt-get update
 RUN apt-get install -y vim
 
 # install node / npm
-RUN apt-get install -y nodejs
-RUN apt-get install -y npm
+# RUN apt-get install -y nodejs
+# RUN apt-get install -y npm
 
 # install python packages
 RUN pip install flask
@@ -19,14 +19,17 @@ RUN pip install pymongo
 RUN pip install fpdf
 
 # move directory files
-COPY . /factsheets
+COPY factsheets /factsheets
+COPY . /webapp
+
+CMD ["python", "/webapp/app.py"]
 
 # install node modules and build bundles
 # RUN npm --prefix /factsheets/static install
 # RUN npm --prefix /factsheets/static run build
 
 # install factsheets
-RUN pip install -e /factsheets
+# RUN pip install -e /factsheets
 
 # load mongo db
 #RUN python -c "import factsheets;factsheets.load_collection('funds', '/factsheets/factsheets/data.json')"

@@ -1,0 +1,11 @@
+*.csv
+*.json
+*.pdf
+*.pyc
+
+*/__pycache__/*
+*.egg-info/*
+static/node_modules/*
+static/package-lock.json
+.dockerignore
+Dockerfile
