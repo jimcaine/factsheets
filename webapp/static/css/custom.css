@@ -1,0 +1,29 @@
+.container-fluid {
+	padding-top: 50px;
+}
+
+.nav {
+	position: fixed;
+	width: 150px;
+	overflow-y: scoll;
+	top: 0;
+	bottom: 0;
+}
+
+.nav ul {
+	padding-top: 50px;
+	padding-left: -20px;
+	list-style-type: none;
+}
+
+.nav ul div {
+	border: dashed;
+}
+
+.nav ul div:hover {
+	color: blue;
+}
+
+.content {
+	padding-left: 150px;
+}

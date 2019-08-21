@@ -1,0 +1,17 @@
+.env
+venv/*
+
+*.pyc
+*.egg-info/*
+
+data/*
+logs/*
+!logs/.keep
+webapp/static/node_modules
+webapp/static/package-lock.json
+webapp/static/dist/*
+
+*.csv
+*.pdf
+
+
