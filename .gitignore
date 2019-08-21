@@ -1,17 +1,19 @@
 .env
 venv/*
 
+.DS_Store
+*.csv
+*.pdf
 *.pyc
-
+*.ipynb
+.ipynb_checkpoints/*
 data/*
 logs/*
 !logs/.keep
+
+webapp/static/fonts/*
+webapp/static/img/*
 webapp/*.egg-info/*
 webapp/static/node_modules
 webapp/static/package-lock.json
 webapp/static/dist/*
-
-*.csv
-*.pdf
-
-

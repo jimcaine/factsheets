@@ -33,7 +33,7 @@ def create_fund(fund_name, data):
 def read_fund(fund_name):
     data = mongo_client['factsheets']['funds'] \
         .find({'fund_name': fund_name})
-    return list(data)
+    return list(data)[0]
 
 def update_fund(fund_name, updates):
     mongo_client['factsheets']['funds'] \

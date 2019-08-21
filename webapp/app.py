@@ -30,8 +30,9 @@ def fund():
         fund_name = data['fund_name']
 
         fund = dataio.read_fund(fund_name=fund_name)
-        fund = fund[0]
+        #fund = fund[0]
         fund.pop('_id')
+        print(fund)
         return jsonify(fund)
 
     if request.method == 'PUT':
@@ -58,13 +59,20 @@ def get_funds():
 @app.route('/api/fact_sheet', methods=['GET', 'POST'])
 def get_fact_sheet():
     if request.method == 'POST':
+        # get data and assemble pdf props
         data = request.json
         fund_name = data.get('fund_name')
-        fund_overview = data.get('fund_overview')
+        props = dataio.read_fund(fund_name)
+        # props = {
+        #     'fund_name': data.get('fund_name'),
+        #     'fund_overview': data.get('fund_overview')
+        # }
+        # print(props)
 
-        create_pdf.generate_fact_sheet(
-            fund_name=fund_name,
-            fund_overview=fund_overview)
+        # build pdf
+        pdf = create_pdf.FactsheetPDF()
+        pdf.set_state(props=props)
+        pdf.build()
 
         return jsonify({'success': True})
 
