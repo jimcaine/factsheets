@@ -1,29 +1,46 @@
-.container-fluid {
-	padding-top: 50px;
+body {
+	position: relative;
 }
 
-.nav {
+/*Sidebar*/
+.sidebar {
+	background-color: #3166a0;
 	position: fixed;
-	width: 150px;
+	width: 200px;
 	overflow-y: scoll;
-	top: 0;
-	bottom: 0;
+	height: 100%;
+
+	padding-top: 25px;
+	/*top: 0;*/
+	/*bottom: 0;*/
 }
 
-.nav ul {
-	padding-top: 50px;
-	padding-left: -20px;
+.sidebar ul {
+	padding-top: 10px;
+	padding-left: 0px;
 	list-style-type: none;
 }
 
-.nav ul div {
-	border: dashed;
+.sidebar ul div {
+	padding-top: 5px;
+	padding-bottom: 5px;
 }
 
-.nav ul div:hover {
-	color: blue;
+.sidebar ul div:hover {
+	background-color: #4fcaf7;
+}
+
+.sidebar ul div li {
+	padding-left: 10px;
+	color: white;
+}
+
+/*Content*/
+.container-fluid {
+	padding-top: 50px;
+	padding-left: 230px;
 }
 
 .content {
-	padding-left: 150px;
+	/*padding-left: 150px;*/
 }

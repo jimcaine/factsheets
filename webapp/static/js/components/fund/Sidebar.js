@@ -1,6 +1,7 @@
 import React from 'react'
 import axios from 'axios'
 import { saveAs } from 'file-saver'
+import factsheets_logo from '../../../img/factsheets_logo.png'
 
 class Sidebar extends React.Component {
   constructor() {
@@ -26,33 +27,15 @@ class Sidebar extends React.Component {
         link.click()
         console.log('downloaded')
       })
-
-
-    // window.location.href = '/api/fact'
-
-    // const Http = new XMLHttpRequest()
-    // const url = '/api/fact_sheet'
-    // Http.open('POST', url)
-    // Http.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-    // Http.send(JSON.stringify(data))
-
-
   }
 
 
-  //   })
-  //     .then((response) => {
-  //       console.log(response)
-  //       axios.post('/api/fact_sheet', {
-  //         fund_name: 'CRM',
-  //         fund_overview: 'testing from ajax call!'
-  //       })
-  //     })
-  // }
-
   render() {
     return (
-      <div className="nav">
+      <div className="sidebar">
+        <div id="sidebar-logo">
+          <img src={factsheets_logo} />
+        </div>
         <ul>
           <div onClick={this.handleClick}>
             <li>Generate Report</li>

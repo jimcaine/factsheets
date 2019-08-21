@@ -4,7 +4,9 @@ import pandas as pd
 from fpdf import FPDF
 from functools import reduce
 
-STATIC_PATH = os.path.dirname(os.path.realpath(__file__)) + '/../static'
+STATIC_PATH = os.getcwd() + '/webapp/static'
+print(STATIC_PATH)
+
 
 def generate_random_return():
     ret = random.random() * random.choice([-1, 1]) * 10
@@ -32,11 +34,11 @@ class FactsheetPDF(FPDF):
         self.add_font(
             family='gebody',
             style='',
-            fname=STATIC_PATH + '/fonts/GeBody-x0zj.ttf',
+            fname=STATIC_PATH + '/fonts/Ge Body.ttf',
             uni=True)
         
         # define section sizes
-        self.page_width = 210
+        self.page_width = 210 
         self.page_height = 297
         self.border = 4
         

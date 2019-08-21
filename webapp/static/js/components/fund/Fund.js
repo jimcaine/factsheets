@@ -67,40 +67,44 @@ class Fund extends React.Component {
     ]
 
     return (
-      <div className="container-fluid">
+
+      <div id="body">
         <Sidebar 
           fundName={this.state.fundName}
           fundOverview={this.state.fundOverview} />
 
-        <div className="content">
-          <Header
-            fundName={this.state.fundName} />
-          <div>
-            <label>Fund Overview</label>
-            <div className="form-group">
-              <textarea
-                className="form-control"
-                rows="5"
-                name="fundOverview"
-                value={this.state.fundOverview}
-                onChange={this.handleChange}>
-              </textarea>
-            </div>
+        <div className="container-fluid">
 
+          <div className="content">
+            <Header
+              fundName={this.state.fundName} />
             <div>
-              <label>Fund Performance</label>
-              <ReactTabulator 
-                columns={columns}
-                data={data} />
+              <label>Fund Overview</label>
+              <div className="form-group">
+                <textarea
+                  className="form-control"
+                  rows="5"
+                  name="fundOverview"
+                  value={this.state.fundOverview}
+                  onChange={this.handleChange}>
+                </textarea>
+              </div>
+
+              <div>
+                <label>Fund Performance</label>
+                <ReactTabulator 
+                  columns={columns}
+                  data={data} />
+              </div>
+              <br/>
+
+              <button
+                className="btn btn-primary"
+                onClick={ () => this.handleClick() }>
+                Update Data
+              </button>
+
             </div>
-            <br/>
-
-            <button
-              className="btn btn-primary"
-              onClick={ () => this.handleClick() }>
-              Update Data
-            </button>
-
           </div>
         </div>
       </div>
