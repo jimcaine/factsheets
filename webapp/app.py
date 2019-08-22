@@ -30,7 +30,6 @@ def fund():
         fund_name = data['fund_name']
 
         fund = dataio.read_fund(fund_name=fund_name)
-        #fund = fund[0]
         fund.pop('_id')
         print(fund)
         return jsonify(fund)
@@ -39,11 +38,13 @@ def fund():
         data = request.json
         fund_name = data['fund_name']
         fund_overview = data.get('fund_overview', '')
+        returns = data.get('returns', [])
 
         dataio.update_fund(
             fund_name=fund_name,
             updates={
                 'fund_overview': fund_overview,
+                'returns': returns
             })
 
         return(jsonify({'success': True}))

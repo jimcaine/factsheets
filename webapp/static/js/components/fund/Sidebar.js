@@ -7,7 +7,12 @@ class Sidebar extends React.Component {
   constructor() {
     super()
 
+    this.state = {
+      showManageData: false
+    }
+
     this.handleClick = this.handleClick.bind(this)
+    this.handleManageDataClick = this.handleManageDataClick.bind(this)
   }
 
   handleClick() {
@@ -29,8 +34,20 @@ class Sidebar extends React.Component {
       })
   }
 
+  handleManageDataClick() {
+    console.log('hello from manage data click')
+    this.setState({
+      showManageData: this.state.showManageData ? false : true
+    })
+  }
+
 
   render() {
+    const manageDataIsVisble = 
+      this.state.showManageData ? 'visible' : 'hidden'
+
+    console.log(manageDataIsVisble)
+
     return (
       <div className="sidebar">
         <div id="sidebar-logo">
@@ -42,8 +59,24 @@ class Sidebar extends React.Component {
           </div>
 
           <div>
-            <li>Manage Data</li>
+            <li
+              onClick={this.handleManageDataClick}>
+              Manage Data
+            </li>
           </div>
+
+          {/*<div
+            className="sidebar-dropdown-item"
+            id="manage-data-dropdown-items"
+            ref="manage-data-dropdown-items"
+            style={{visibility: manageDataIsVisble}}>
+            <li>
+              Fund Overview
+            </li>
+            <li>
+              Monthly Returns
+            </li>
+          </div>*/}
 
           <div>
             <li>Report Components</li>

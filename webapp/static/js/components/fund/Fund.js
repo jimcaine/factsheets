@@ -17,10 +17,11 @@ class Fund extends React.Component {
 
     // set initial state
     this.state = {
-      fundName: fundName
+      fundName: fundName,
+      returns: []
     }
 
-    this.handleClick = this.handleClick.bind(this)
+    this.handleUpdateDataClick = this.handleUpdateDataClick.bind(this)
     this.handleChange = this.handleChange.bind(this)
   }
 
@@ -31,19 +32,28 @@ class Fund extends React.Component {
       }
     })
       .then((response) => {
-        this.setState({
-          'fundOverview': response.data.fund_overview
+        const returns = response.data.returns
+        returns.forEach((item, i) => {
+          item.id = i
         })
+
+        this.setState({
+          'fundOverview': response.data.fund_overview,
+          'returns': returns
+        })
+        console.log(this.state)
       })
   }
 
-  handleClick() {
+  handleUpdateDataClick() {
+    // send axios request
     axios.put('/api/fund', {
       fund_name: this.state.fundName,
-      fund_overview: this.state.fundOverview
+      fund_overview: this.state.fundOverview,
+      returns: this.refs['returns-table'].props.data
     })
       .then((response) => {
-        console.log('Updated data:')
+        console.log('Updated fund')
         console.log(response)
       })
   }
@@ -55,19 +65,14 @@ class Fund extends React.Component {
 
   render() {
 
-    // define tabulator data
+    // define tabulator columns
     const columns = [
       {title:"Year", field:"year"},
       {title:"Month", field:"month"},
       {title:"Return", field:"return", editor:true}
     ]
 
-    const data = [
-      {"id": 0, "month": "January", "year": 2019, "return": 10.5}
-    ]
-
     return (
-
       <div id="body">
         <Sidebar 
           fundName={this.state.fundName}
@@ -93,14 +98,16 @@ class Fund extends React.Component {
               <div>
                 <label>Fund Performance</label>
                 <ReactTabulator 
+                  ref='returns-table'
                   columns={columns}
-                  data={data} />
+                  data={this.state.returns}
+                  options={{'height': 200}} />
               </div>
               <br/>
 
               <button
                 className="btn btn-primary"
-                onClick={ () => this.handleClick() }>
+                onClick={ () => this.handleUpdateDataClick() }>
                 Update Data
               </button>
 

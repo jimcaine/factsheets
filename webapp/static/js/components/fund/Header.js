@@ -8,7 +8,8 @@ class Header extends React.Component {
   render() {
     return (
       <div>
-        <h1>Fund name: <span id="fund_name">{this.props.fundName}</span></h1>
+        <h1 style={{'textAlign': 'center'}}>Fund: <span id="fund_name">{this.props.fundName}</span></h1>
+        <hr/>
       </div>
     )
   }

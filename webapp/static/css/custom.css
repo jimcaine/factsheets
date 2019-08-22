@@ -11,8 +11,7 @@ body {
 	height: 100%;
 
 	padding-top: 25px;
-	/*top: 0;*/
-	/*bottom: 0;*/
+
 }
 
 .sidebar ul {
@@ -28,6 +27,7 @@ body {
 
 .sidebar ul div:hover {
 	background-color: #4fcaf7;
+	cursor: pointer;
 }
 
 .sidebar ul div li {

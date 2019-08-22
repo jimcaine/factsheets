@@ -129,7 +129,7 @@ class FactsheetPDF(FPDF):
         self.set_font(family='Arial', style='', size=6)
 
         df = pd.DataFrame(self.props['returns'])
-        df['return'] = df['return'].apply(lambda x: '%0.2f' % (float(x)*1000))
+        df['return'] = df['return'].apply(lambda x: '%0.2f' % (float(x)))
         year_min = df['year'].min()
         year_max = df['year'].max()
         month_min = df[df['year'] == year_min]['month'].min()
