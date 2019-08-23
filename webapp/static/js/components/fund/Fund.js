@@ -4,6 +4,7 @@ import { ReactTabulator } from 'react-tabulator'
 
 import Sidebar from './Sidebar'
 import Header from './Header'
+import Modal from './Modal'
 
 class Fund extends React.Component {
 
@@ -18,7 +19,8 @@ class Fund extends React.Component {
     // set initial state
     this.state = {
       fundName: fundName,
-      returns: []
+      returns: [],
+      strategyAllocation: []
     }
 
     this.handleUpdateDataClick = this.handleUpdateDataClick.bind(this)
@@ -32,6 +34,13 @@ class Fund extends React.Component {
       }
     })
       .then((response) => {
+        console.log(response.data)
+
+        const strategyAllocation = response.data.strategy_allocation
+        strategyAllocation.forEach((item, i) => {
+          item.id = i
+        })
+
         const returns = response.data.returns
         returns.forEach((item, i) => {
           item.id = i
@@ -39,7 +48,8 @@ class Fund extends React.Component {
 
         this.setState({
           'fundOverview': response.data.fund_overview,
-          'returns': returns
+          'returns': returns,
+          'strategyAllocation': strategyAllocation
         })
         console.log(this.state)
       })
@@ -66,10 +76,15 @@ class Fund extends React.Component {
   render() {
 
     // define tabulator columns
-    const columns = [
+    const returnsCols = [
       {title:"Year", field:"year"},
       {title:"Month", field:"month"},
       {title:"Return", field:"return", editor:true}
+    ]
+
+    const strategyAllocationCols = [
+      {title:"Name", field:"name"},
+      {title:"Dollars", field:"dollars", editor:true}
     ]
 
     return (
@@ -99,16 +114,32 @@ class Fund extends React.Component {
                 <label>Fund Performance</label>
                 <ReactTabulator 
                   ref='returns-table'
-                  columns={columns}
+                  columns={returnsCols}
                   data={this.state.returns}
                   options={{'height': 200}} />
               </div>
               <br/>
 
+              <div>
+                <label>Strategy Allocation</label>
+                <ReactTabulator 
+                  ref='strategy-allocation-table'
+                  columns={strategyAllocationCols}
+                  data={this.state.strategyAllocation}
+                  options={{'height': 130}} />
+              </div>
+
+
+              <hr/>
               <button
                 className="btn btn-primary"
                 onClick={ () => this.handleUpdateDataClick() }>
                 Update Data
+              </button>
+
+              <button
+                onClick={ () => console.log('clicked') }>
+                Click me
               </button>
 
             </div>

@@ -1,5 +1,6 @@
 import os
 import random
+import numpy as np
 import pandas as pd
 from fpdf import FPDF
 from functools import reduce
@@ -12,9 +13,12 @@ def generate_random_return():
     ret = random.random() * random.choice([-1, 1]) * 10
     return '%0.2f' % ret
 
-def geometric_mean(returns):
-    returns = [float(ret) for ret in returns]
-    return reduce((lambda x, y: x * y), returns)
+def geometric_return(returns):
+    returns = [(ret / 100.) + 1 for ret in returns]
+    geo_return = np.prod(returns)**(1.0 / len(returns))
+    geo_return = (geo_return - 1) * 100
+    geo_return = '%0.2f' % geo_return
+    return geo_return
 
 class FactsheetPDF(FPDF):
     """
@@ -149,7 +153,7 @@ class FactsheetPDF(FPDF):
                 }, ignore_index=True)
         df = df.pivot(index='year', columns='month', values='return')
         df['Year'] = df.apply(lambda row: \
-            geometric_mean([float(x) for x in [y for y in row.values if y != '']]), axis=1)
+            geometric_return([float(x) for x in [y for y in row.values if y != '']]), axis=1)
         print(df)
 
         # for year, months in df.iterrows():
