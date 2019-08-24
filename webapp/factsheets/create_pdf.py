@@ -9,6 +9,7 @@ STATIC_PATH = os.getcwd() + '/webapp/static'
 print(STATIC_PATH)
 
 
+
 def generate_random_return():
     ret = random.random() * random.choice([-1, 1]) * 10
     return '%0.2f' % ret
@@ -20,207 +21,164 @@ def geometric_return(returns):
     geo_return = '%0.2f' % geo_return
     return geo_return
 
-class FactsheetPDF(FPDF):
-    """
-    Renders a PDF file.  Set state with self.set_state
-    """
-    def set_state(self, props):
-        # save props to object
-        self.props = props
-        print(self.props)
 
-        # store here for now
-        self.path = STATIC_PATH + '/fact_sheet.pdf'
-        self.header_background_img_path = STATIC_PATH + '/img/background.png'
-        self.logo_img_path = STATIC_PATH + '/img/logo.png'
-        
-        # add fonts
-        self.add_font(
-            family='gebody',
-            style='',
-            fname=STATIC_PATH + '/fonts/Ge Body.ttf',
-            uni=True)
-        
-        # define section sizes
-        self.page_width = 210 
-        self.page_height = 297
-        self.border = 4
-        
-        self.header_height = 30
-        self.logo_width=20
-        self.logo_height=20
+class PDFComponent:
+    def __init__(self, x, y, width, height, margin=0, padding=0):
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.margin = margin
+        self.padding = padding
 
-    def print_state(self):
-        print('----')
-        print('Printing PDF state.')
-        print('\tFund Name: %s' % self.props['fund_name'])
-        print('\tFund Overview: %s' % self.props['fund_overview'])
-        print('----')
+class TextComponent(PDFComponent):
+    def __init__(self, txt,
+                 fill=False, fill_color=(256,256,256),
+                 font_family='Arial', style='', size=12, font_color=(0,0,0),
+                 **kwargs):
+        super(TextComponent, self).__init__(**kwargs)
+        self.txt= txt
+        self.fill = fill
+        self.fill_color = fill_color
+        self.font_family = font_family
+        self.style = style
+        self.size = size
+        self.font_color = font_color
 
-    def header(self):
-        pass
+    def render(self, pdf):
+        # set position
+        pdf.set_xy(self.x, self.y)
 
-    def footer(self):
-        pass
+        # set font
+        pdf.set_font(
+            family=self.font_family,
+            style=self.style,
+            size=self.size)
+        pdf.set_text_color(*self.font_color)
 
-    def render_header_background(self):
-        x = self.border
-        y = self.border
-        width = self.page_width - (self.border*2)
-        height = self.header_height - (self.border)
-        self.image(
-            self.header_background_img_path,
-            x=self.border,
-            y=self.border,
-            w=width,
-            h=height,
-            type='PNG')
-        
-    def render_logo(self):
-        self.image(
-            self.logo_img_path,
-            x=self.border + 2,
-            y=self.border+2,
-            w=self.logo_width,
-            h=self.logo_height,
-            type='PNG')
-
-    def render_fund_name(self):
-        self.set_font(family='gebody', style='', size=15)
-        self.set_text_color(231, 237, 238)
-        self.set_xy(self.border + self.logo_width + 5, 0)
-        self.cell(
-            w=self.page_width-50,
-            h=30,
-            txt=self.props['fund_name'],
-            border=0,
-            ln=2,
+        # draw cell
+        pdf.cell(
+            w=self.width,
+            h=self.height,
+            txt=self.txt,
             align='L')
+        return pdf
+
+class ImageComponent(PDFComponent):
+    def __init__(self, img_path, img_type='PNG', **kwargs):
+        super(ImageComponent, self).__init__(**kwargs)
+        self.img_path = img_path
+        self.img_type = img_type
+
+    def render(self, pdf):
+        # set position
+        pdf.set_xy(self.x, self.y)
+
+        # draw image
+        pdf.image(
+            self.img_path,
+            x=self.x,
+            y=self.y,
+            w=self.width,
+            h=self.height,
+            type=self.img_type)
+        return pdf
+
+
+class TableComponent(PDFComponent):
+    def __init__(self, df, striped=False, **kwargs):
+        super(TableComponent, self).__init__(**kwargs)
+        self.df = df
+        self.striped = striped
+
+        # calculate cell height and cell width
+        nrows, ncols = df.shape
+        self.cell_height = self.height / float(nrows)
+        self.cell_width = self.width / float(ncols)
+
+        # set fill color(s)
+        self.fill_color = (223,223,223)
         
-    def render_fund_overview(self):
-        self.set_xy(self.border, self.header_height)
-        self.set_text_color(0,0,0)
-        self.set_fill_color(223,223,223)
-        self.set_font('Arial', '', 8)
-        self.multi_cell(
-            w=self.page_width - (2*self.border),
-            h=5,
-            txt=self.props['fund_overview'],
-            border=0,
-            fill=True)
-        
-    def render_table(self):
-        cell_height = 5
-        cell_width = 8
-        self.set_x(self.border
-                )
-        # header
-        self.set_font(
-            family='Arial',
-            style='B',
-            size=12)
-        self.set_text_color(0,0,0)
-        self.cell(
-            w=0,
-            h=10,
-            txt='Monthly Returns Net Of Fees',
-            border=0,
-            ln=2)
-
-        # table
-        x0 = self.get_x()
-        self.set_fill_color(223,223,223)
-        self.set_font(family='Arial', style='', size=6)
-
-        df = pd.DataFrame(self.props['returns'])
-        df['return'] = df['return'].apply(lambda x: '%0.2f' % (float(x)))
-        year_min = df['year'].min()
-        year_max = df['year'].max()
-        month_min = df[df['year'] == year_min]['month'].min()
-        month_max = df[df['year'] == year_max]['month'].max()
-        for month in range(1, month_min):
-            df = df.append({
-                'year': year_min,
-                'month': month,
-                'return': ''
-                }, ignore_index=True)
-
-        for month in range(month_max + 1, 13):
-            df = df.append({
-                'year': year_max,
-                'month': month,
-                'return': ''
-                }, ignore_index=True)
-        df = df.pivot(index='year', columns='month', values='return')
-        df['Year'] = df.apply(lambda row: \
-            geometric_return([float(x) for x in [y for y in row.values if y != '']]), axis=1)
-        print(df)
-
-        # for year, months in df.iterrows():
-        #     for month_ret in months.iteritems():
-        #         print(year, month_ret)
 
 
+    def render(self, pdf):
+        # set position
+        pdf.set_xy(self.x, self.y)
+        x0 = self.x
 
-        for month in ['', 'Jan', 'Feb', 'Mar', 'Apr',
-                      'May', 'Jun', 'Jul', 'Aug',
-                      'Sep', 'Oct', 'Nov', 'Dec', 'Year']:
-            self.cell(cell_width,cell_height,month,'B',0,'C')
-        self.set_x(x0)
-        self.set_y(self.get_y() + cell_height)
+        # set font
+        pdf.set_font(family='Arial', style='', size=6)
 
+        # set fill color
+        pdf.set_fill_color(*self.fill_color)
 
-        fill = True
-        for year, months in df.iterrows():
-            self.set_x(x0)
-            self.cell(cell_width,cell_height,str(year),0,0,'C',fill)
-            for month_ret in months.iteritems():
-                month = str(month_ret[0])
-                ret = str(month_ret[1])
-                self.cell(cell_width,cell_height,ret,0,0,'C',fill)
-            self.set_y(self.get_y() + cell_height)
+        # write header
+        pdf.cell(self.cell_width, self.cell_height, '', 0, 0, 'C')
+        for col in self.df.columns:
+            pdf.cell(self.cell_width, self.cell_height, str(col), 0, 0, 'C')
 
-            if fill:
-                fill = False
-            else:
-                fill = True
+        # shift cursor
+        pdf.set_x(x0)
+        pdf.set_y(pdf.get_y() + self.cell_height)
 
-        # fill = True
-        # for year in [str(e) for e in range(2003,2009)]:
-        #     self.set_x(x0)
-        #     self.cell(cell_width,cell_height,year,0,0,'C',fill)
-        #     for i in range(13):
-        #         self.cell(cell_width,cell_height,generate_random_return(),0,0,'C',fill)
-        #     self.set_y(self.get_y() + cell_height)
-            
-        #     if fill:
-        #         fill = False
-        #     else:
-        #         fill = True
-        
-    def build(self):
-        self.alias_nb_pages()
-        self.add_page()
-        
-        # header
-        self.render_header_background()
-        self.render_logo()
-        self.render_fund_name()
-        
-        # fund overview
-        self.render_fund_overview()
-        
-        # Monthly Returns
-        self.render_table()
-        
-        # save pdf to fs
-        self.output(self.path, 'F')
+        # write data
+        fill = False
+        for index, row in self.df.iterrows():
+            print('fill=%s' % fill)
+            # write index as first col
+            pdf.cell(self.cell_width, self.cell_height, str(index), 0, 0, 'C', fill)
+
+            # write the remaining cols
+            for col in row.values:
+                pdf.cell(self.cell_width, self.cell_height, str(col), 0, 0, 'C', fill)
+
+            # shift cursor
+            pdf.set_x(x0)
+            pdf.set_y(pdf.get_y() + self.cell_height)
+
+            if self.striped:
+                if not fill:
+                    fill = True
+                else:
+                    fill = False
+
+        # return pdf back
+        return pdf
+
 
 def generate_fact_sheet(fund_name, fund_overview):
-    pdf = FactsheetPDF()
-    pdf.set_state(
-        props={
-            'fund_name': fund_name,
-            'fund_overview': fund_overview,
-        })
-    pdf.build()
+    components = [
+        # header background
+        ImageComponent(
+            '/Users/jimcaine/projects/factsheets/webapp/static/img/background.png',
+            x=0, y=0, width=210, height=30),
+        
+        # header logo
+        ImageComponent(
+            '/Users/jimcaine/projects/factsheets/webapp/static/img/logo.png',
+            x=5, y=5, width=20, height=20),
+        
+        TextComponent(
+            'Jimbos Fund',
+            x=30, y=15, width=0, height=0,
+            size=16, font_color=(256,256,256)),
+        
+        TextComponent(
+            'this is my fund summarythis is my fund summarythis is my fund summarythis is my fund summarythis is my fund summarythis is my fund summarythis is my fund summarythis is my fund summarythis is my fund summarythis is my fund summarythis is my fund summarythis is my fund summarythis is my fund summarythis is my fund summarythis is my fund summarythis is my fund summarythis is my fund summarythis is my fund summarythis is my fund summarythis is my fund summarythis is my fund summarythis is my fund summarythis is my fund summarythis is my fund summarythis is my fund summarythis is my fund summarythis is my fund summarythis is my fund summarythis is my fund summarythis is my fund summarythis is my fund summarythis is my fund summarythis is my fund summarythis is my fund summarythis is my fund summarythis is my fund summary',
+            x=0, y=30, height=6, width=210,
+            size=8,
+            fill=True, fill_color=(223,223,223)),
+        
+        ImageComponent(
+            '/Users/jimcaine/projects/factsheets/notebooks/test.png',
+            relative=True, x=0, y=0, width=100, height=50),
+        
+        TableComponent(df, striped=True,
+            x=5, y=120, width=100, height=30),
+    ]
+
+    pdf = FPDF()
+    pdf.add_page()
+    for component in components:
+        pdf = component.render(pdf)
+    pdf.output('test.pdf', 'F')
