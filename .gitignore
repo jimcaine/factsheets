@@ -11,6 +11,8 @@ data/*
 logs/*
 !logs/.keep
 
+notebooks/*
+
 webapp/static/fonts/*
 webapp/static/img/*
 webapp/*.egg-info/*

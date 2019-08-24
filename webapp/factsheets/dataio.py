@@ -2,6 +2,8 @@ import os
 import json
 from pymongo import MongoClient
 
+FACTSHEETS_FS = os['FACTSHEETS_FS']
+
 mongo_client = MongoClient(
     host=os.environ['FS_MONGO_HOST'],
     port=int(os.environ['FS_MONGO_PORT']))
@@ -54,3 +56,10 @@ def read_funds():
     data = list(data)
     data = [e['fund_name'] for e in data]
     return data
+
+##########################
+# PLOTS
+##########################
+def create_investment_growth_plot(fund_name, fig):
+    path = FACTSHEETS_FS + '/funds/%s/plots/investment_growth.png' % fund_name
+    fig.write_image(path)
